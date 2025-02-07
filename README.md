@@ -6,8 +6,6 @@
 
 ### Installing Dependencies
 
-If you already have [RDKit](https://www.rdkit.org/docs/Install.html) installed, install Click via pip:
-
 ```bash
 python3 -m venv .venv
 source .venv/bin/activate
