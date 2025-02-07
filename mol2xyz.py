@@ -9,8 +9,11 @@ Usage as CLI:
     # Using an SDF file that already contains 3D coordinates:
     $ python mol2xyz.py molecule.sdf output.xyz
 
-    # Using a SMILES string (which will be converted to 3D):
+    # Using a SMILES string (which will be converted to 3D) and not showing hydrogens:
     $ python mol2xyz.py "CCO" output.xyz --smiles
+
+    # Using an SDF file and showing hydrogens in the final output:
+    $ python mol2xyz.py molecule.sdf output.xyz --show-hs
 
 Usage as a library:
     >>> from mol2xyz import molecule_from_smiles, molecule_from_sdf, write_xyz
@@ -122,7 +125,13 @@ def write_xyz(mol, output_path):
     is_flag=True,
     help="Interpret the input_data as a SMILES string instead of an SDF file.",
 )
-def main(input_data, output_file, smiles):
+@click.option(
+    "--show-hs",
+    is_flag=True,
+    default=False,
+    help="Show hydrogens in the final XYZ file. (Default: hydrogens are removed.)",
+)
+def main(input_data, output_file, smiles, show_hs):
     """
     Convert an SDF file or a SMILES string into an XYZ file.
 
@@ -143,6 +152,10 @@ def main(input_data, output_file, smiles):
     except Exception as e:
         click.echo(f"Error: {e}", err=True)
         raise click.Abort()
+
+    # Remove hydrogens from the final output unless --show-hs is specified.
+    if not show_hs:
+        mol = Chem.RemoveHs(mol)
 
     try:
         write_xyz(mol, output_file)
